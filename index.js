@@ -129,7 +129,7 @@ async function GetTraefikConfig() {
     }
     console.log(Object.keys(Traefik_Compiled['http']['middlewares']).length)
 
-    // console.log(Traefik_Compiled)
+    console.log(Traefik_Compiled)
     return Traefik_Compiled
 }
 GetTraefikConfig()
