@@ -72,6 +72,8 @@ async function GetTraefikConfig() {
 
         if (router_data['rule'].includes('.easypanel.host`)')) continue
 
+        if (router.includes('easypanel-ip')) continue
+
         Traefik_Compiled['http']['routers'][router] = router_data
         console.log(router, Traefik_Compiled['http']['routers'][router])
     }
