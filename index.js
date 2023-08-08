@@ -17,7 +17,7 @@ app.listen(port, () => {
 
 async function GetTraefikConfig() {
     let Traefik_Coolify
-    await fetch('http://coolify:3000/webhooks/traefik/main.json')
+    await fetch('http://0.0.0.0:3000/webhooks/traefik/main.json')
     .then(response => response.json())
     .then(data => {
         Traefik_Coolify = data
