@@ -23,7 +23,7 @@ async function GetTraefikConfig() {
         Traefik_Coolify = data
     })
     .catch(async (error) => {
-        await fetch('http://coolify:3000/webhooks/traefik/main.json')
+        await fetch('http://10.0.0.176:3000/webhooks/traefik/main.json')
         .then(response => response.json())
         .then(data => {
             Traefik_Coolify = data
