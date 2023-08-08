@@ -17,12 +17,18 @@ app.listen(port, () => {
 
 async function GetTraefikConfig() {
     let Traefik_Coolify
-    await fetch('http://localhost:3000/webhooks/traefik/main.json')
+    await fetch('http://coolify:3000/webhooks/traefik/main.json')
     .then(response => response.json())
     .then(data => {
         Traefik_Coolify = data
     })
-    .catch(console.error)
+    .catch(async (error) => {
+        await fetch('http://localhost:3000/webhooks/traefik/main.json')
+        .then(response => response.json())
+        .then(data => {
+            Traefik_Coolify = data
+        })
+    })
 
     let Traefik_EasyPanel = yaml.load(fs.readFileSync('/etc/easypanel/traefik/config/main.yaml', {encoding: 'utf-8'}))
 
@@ -60,6 +66,9 @@ async function GetTraefikConfig() {
 
         if (router_data['rule'].includes('Host(`www.')) continue
 
+        indexRedirectHttps = router_data['middlewares'].indexOf('redirect-to-https')
+        if (indexRedirectHttps != -1) router_data['middlewares'].splice(indexRedirectHttps)
+
         Traefik_Compiled['http']['routers'][router] = router_data
         console.log(router, Traefik_Compiled['http']['routers'][router])
     }
@@ -73,6 +82,9 @@ async function GetTraefikConfig() {
         if (router_data['rule'].includes('.easypanel.host`)')) continue
 
         if (router.includes('easypanel-ip')) continue
+
+        indexRedirectHttps = router_data['middlewares'].indexOf('redirect-to-https')
+        if (indexRedirectHttps != -1) router_data['middlewares'].splice(indexRedirectHttps)
 
         Traefik_Compiled['http']['routers'][router] = router_data
         console.log(router, Traefik_Compiled['http']['routers'][router])
@@ -97,6 +109,8 @@ async function GetTraefikConfig() {
     }
     for (const service in Traefik_EasyPanel['http']['services']) {
         let service_data = Traefik_EasyPanel['http']['services'][service]
+
+        if (service == 'error-pages') continue
         
         Traefik_Compiled['http']['services'][service] = service_data
         console.log(service, Traefik_Compiled['http']['services'][service])
@@ -118,6 +132,10 @@ async function GetTraefikConfig() {
 
         if (middleware.includes('-www')) continue
 
+        if (middleware == 'redirect-to-https') continue
+
+        if (middleware == 'redirect-to-http') continue
+
         Traefik_Compiled['http']['middlewares'][middleware] = middleware_data
         console.log(middleware)
     }
@@ -132,6 +150,7 @@ async function GetTraefikConfig() {
         console.log(middleware)
     }
     console.log(Object.keys(Traefik_Compiled['http']['middlewares']).length)
+    if (Object.keys(Traefik_Compiled['http']['middlewares']).length == 0) delete Traefik_Compiled['http']['middlewares']
 
     console.log(Traefik_Compiled)
     return Traefik_Compiled
