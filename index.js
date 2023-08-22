@@ -66,8 +66,8 @@ async function GetTraefikConfig() {
 
         if (router_data['rule'].includes('Host(`www.')) continue
 
-        indexRedirectHttps = router_data['middlewares'].indexOf('redirect-to-https')
-        if (indexRedirectHttps != -1) router_data['middlewares'].splice(indexRedirectHttps)
+        //indexRedirectHttps = router_data['middlewares'].indexOf('redirect-to-https')
+        //if (indexRedirectHttps != -1) router_data['middlewares'].splice(indexRedirectHttps)
 
         Traefik_Compiled['http']['routers'][router] = router_data
         console.log(router, Traefik_Compiled['http']['routers'][router])
@@ -83,8 +83,8 @@ async function GetTraefikConfig() {
 
         if (router.includes('easypanel-ip')) continue
 
-        indexRedirectHttps = router_data['middlewares'].indexOf('redirect-to-https')
-        if (indexRedirectHttps != -1) router_data['middlewares'].splice(indexRedirectHttps)
+        //indexRedirectHttps = router_data['middlewares'].indexOf('redirect-to-https')
+        //if (indexRedirectHttps != -1) router_data['middlewares'].splice(indexRedirectHttps)
 
         Traefik_Compiled['http']['routers'][router] = router_data
         console.log(router, Traefik_Compiled['http']['routers'][router])
@@ -144,7 +144,7 @@ async function GetTraefikConfig() {
         
         if (middleware == 'error-pages') continue
 
-        if (middleware == 'redirect-to-https') continue
+        //if (middleware == 'redirect-to-https') continue
 
         Traefik_Compiled['http']['middlewares'][middleware] = middleware_data
         console.log(middleware)
