@@ -34,9 +34,12 @@ async function GetTraefikConfig() {
 
     let Traefik_VPN = yaml.load(fs.readFileSync('/etc/traefik/traefik-vpn.yml', {encoding: 'utf-8'}))
 
+    let Traefik_WEB = yaml.load(fs.readFileSync('/etc/traefik/traefik-web.yml', {encoding: 'utf-8'}))
+
     console.log(Traefik_Coolify)
     console.log(Traefik_EasyPanel)
     console.log(Traefik_VPN)
+    console.log(Traefik_WEB)
 
 
 
@@ -95,6 +98,14 @@ async function GetTraefikConfig() {
         Traefik_Compiled['tcp']['routers'][router] = router_data
         console.log(router, Traefik_Compiled['tcp']['routers'][router])
     }
+    for (const router in Traefik_WEB['http']['routers']) {
+        let router_data = Traefik_WEB['http']['routers'][router]
+
+        router_data['tls'] = { certresolver: 'letsencrypt' }
+
+        Traefik_Compiled['http']['routers'][router] = router_data
+        console.log(router, Traefik_Compiled['http']['routers'][router])
+    }
     console.log(Object.keys(Traefik_Compiled['http']['routers']).length)
     console.log(Object.keys(Traefik_Compiled['tcp']['routers']).length)
 
@@ -120,6 +131,12 @@ async function GetTraefikConfig() {
 
         Traefik_Compiled['tcp']['services'][service] = service_data
         console.log(service, Traefik_Compiled['tcp']['services'][service])
+    }
+    for (const service in Traefik_WEB['http']['services']) {
+        let service_data = Traefik_WEB['http']['services'][service]
+
+        Traefik_Compiled['http']['services'][service] = service_data
+        console.log(service, Traefik_Compiled['http']['services'][service])
     }
     console.log(Object.keys(Traefik_Compiled['http']['services']).length)
     console.log(Object.keys(Traefik_Compiled['tcp']['services']).length)
